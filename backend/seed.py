@@ -3,7 +3,7 @@ from db import db, stamp, now
 from models import AgentCreate
 
 async def initialize():
-    for coll in ['agents', 'missions', 'wallets', 'sessions', 'chat', 'pool','tool_actions']:
+    for coll in ['agents', 'missions', 'wallets', 'sessions', 'chat', 'pool','tool_actions','tool_health']:
         await db[coll].create_index('id', unique=True)
     await db.sessions.create_index('tokenHash', unique=True)
     # New agents enforce one non-deleted identity per wallet, including concurrent requests.

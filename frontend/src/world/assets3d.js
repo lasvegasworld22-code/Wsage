@@ -4,6 +4,7 @@
  */
 
 import * as THREE from 'three';
+import { projectBillboardTexture } from './projectBillboards';
 
 export class Agent3Assets {
     static mat(color, options = {}) {
@@ -157,10 +158,10 @@ export class Agent3Assets {
         return this.withShadow(group);
     }
 
-    static createBillboard({ title = 'MARKET', subtitle = 'live signals', width = 22, height = 13, chart = true } = {}) {
+    static createBillboard({ title = 'MARKET', subtitle = 'live signals', width = 22, height = 13, chart = true, kind, entries } = {}) {
         const group = new THREE.Group();
         const frameMat = this.mat(0x020204, { roughness: 0.55, metalness: 0.2 });
-        const screenTex = this.createScreenTexture({ title, subtitle, chart });
+        const screenTex = kind ? projectBillboardTexture({kind,title,subtitle,entries}) : this.createScreenTexture({ title, subtitle, chart });
         const screenMat = new THREE.MeshBasicMaterial({ map: screenTex, toneMapped: false });
 
         const screen = new THREE.Mesh(new THREE.PlaneGeometry(width, height), screenMat);

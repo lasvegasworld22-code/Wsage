@@ -11,6 +11,7 @@ import CreateAgent from './pages/CreateAgent';
 import Discover from './pages/Discover';
 import AgentModule from './pages/AgentModule';
 import EditAgentMind from './pages/EditAgentMind';
+import ProjectNews from './pages/ProjectNews';
 import Profile from './pages/Profile';
 import Docs from './pages/Docs';
 import { NewMission,MissionReport,WorkFeed } from './pages/Missions';
@@ -21,6 +22,7 @@ import './world/label-safety.css';
 import './civilization-v2.css';
 import './tracker-readability.css';
 import './identity-refinements.css';
+import './plaza-updates.css';
 
 function Civilization(){
  const navigate=useNavigate(),location=useLocation(),engineRef=useRef(),entryTimer=useRef();
@@ -55,6 +57,7 @@ function Civilization(){
   {path==='/wallet'&&<WalletPanel {...props} connect={connect} disconnect={disconnect}/>}
   {path==='/treasury'&&<TreasuryPanel {...props}/>}
   {path==='/exchange'&&<ExchangePanel {...props}/>}
+  {path==='/news'&&<ProjectNews navigate={navigate}/>}
   {path==='/skills'&&<SkillsPanel {...props}/>}
   {path==='/chat'&&<ChatPanel {...props}/>}<Toaster theme="dark" position="top-center" richColors/>
  </main>;

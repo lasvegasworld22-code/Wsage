@@ -218,3 +218,26 @@ Explicit follow-up: editable distinct category presets; all meaningful category-
 - P1: production-volume controls for external actions and live AI; existing demo architecture not a durable multi-worker queue.
 - P2: optional focus-my-agent camera control and specialist visual badges; shared mission templates or verified work milestones.
 - Keep all alternate models locked until the user explicitly asks otherwise. Do not silently enable automatic POST, code execution, posting, wallet spending, or unsupported social-platform access.
+
+## Plaza update work — 2026-09-26 (paused by user before full verification)
+- User requested exact Exchange notice “Agent Exchange is not a trading terminal”; right billboard title “The next chapter”, body “One agent could commission useful work from another.”, tagline “Get paid while your agent work.”; left billboard exclusively project News Feed.
+- Clarified News Feed: versioned, latest-first, curated from completed project work, only major changes such as camera improvements, UI/rendering, tools and bug fixes. App release-note versions are local editorial labels, not claimed upstream Git tags.
+- Also requested focus-own-agent camera button and pre-mission connection indicators. Implemented scoped frontend/backend files: `projectUpdates.js`, `projectBillboards.js`, `ProjectNews.jsx`, `plaza-updates.css`, `ToolHealthPanel.jsx`, `tool_health.py`, plus routes/WorldEngine/HUD integrations.
+- GET diagnostics read/validate configured sources; POST diagnostics only attempt public DNS + TCP/TLS connectivity, never send HTTP POST or payload. POST results deliberately say host-only / credentials and endpoint unverified. Owner-only persisted checks invalidate when tool configuration changes. Automatic mission-form check uses a five-minute freshness window; manual recheck available.
+- Focus button implemented for own agent only, smooth responsive tween, reset/orbit cancellation, and no guest focus. Added camera telemetry for narrow verification.
+- Frontend build and initial news/billboard desktop1920x800/mobile390x844 screenshots passed with overflow[]. User paused before testing-agent verification of focus behavior and tool diagnostics. Do NOT treat these as fully regression-tested based on the later keyboard-only report.
+- User explicitly requested fewer tests and an explanation of actual agent integration and multiplayer limits. Explained shared GPT-5.4 pipeline with real category/tool configuration, real sources/statistics vs prompt-based synthesis, local avatars (no shared real-time player positions), and existing simulated balances.
+
+## Keyboard runtime crash fix — 2026-09-26
+### Report
+“Cannot read properties of undefined (reading 'toLowerCase')” at `onKey`, `static/js/bundle.js:18594:25`; digest `.emergent/recordings/crash-1790427700135.md`. Context: `/create`, category changes, gold avatar, typing a five-character name and repeated context menus.
+
+### Scoped fix
+- Changed ONLY `WorldEngine.js` keyboard handler for this request. Previously keyup unconditionally called `e.key.toLowerCase()`, even when the event supplied no key.
+- Non-string keys and non-movement keys are ignored. Handles keyup before editing/dialog guards so held movement can still be released. Composition and modifier shortcuts do not start walking. Optional target/closest handling avoids missing-target errors; form/contenteditable/textbox typing never controls the player.
+- No auth, data, AI, economy, visual layout or new feature changes in this bug fix.
+
+### Verification
+- Mandatory testing agent report `/app/test_reports/iteration_5.json` read and passed, no remaining issues in this narrow scope.
+- Replayed reported create-form sequence; injected missing/null/numeric/empty keyboard keys; no `toLowerCase` crash or pageerror. Confirmed form typing does not move player; uppercase/lowercase WASD/Arrow keys work outside dialogs and keyup/blur stop movement. Mobile390x844 smoke passed.
+- No backend/LLM/large regression suite run; no accounts or test data created. Intermittent browser automation load-event timeout was noted, while DOM and user flows loaded and worked; not reproduced as an application runtime failure.

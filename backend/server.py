@@ -12,6 +12,7 @@ from mission_timing import execution_window
 from agent_catalog import catalog, MIND_FIELDS
 from tool_config import protect_tools, visible_tools
 from tool_actions import draft_action, owned_action, approve_action, visible_action
+from tool_health import get_health, start_checks
 
 @asynccontextmanager
 async def lifespan(app):
@@ -132,6 +133,14 @@ async def agent_missions(aid: str, user=Depends(identity)):
 async def agent_settings(aid: str,user=Depends(identity)):
     a=await owned(aid,user)
     return {**public_agent(a),'customTools':visible_tools(a.get('customTools',[]))}
+
+@api.get('/agents/{aid}/tools/health', response_model=Document)
+async def tool_health(aid: str,user=Depends(identity)):
+    return await get_health(await owned(aid,user))
+
+@api.post('/agents/{aid}/tools/check', response_model=Document,status_code=202)
+async def check_tools(aid: str,background: BackgroundTasks,user=Depends(identity)):
+    return await start_checks(await owned(aid,user),background)
 
 @api.patch('/agents/{aid}/mind', response_model=Document)
 async def update_mind(aid: str,data: AgentCreate,user=Depends(identity)):
