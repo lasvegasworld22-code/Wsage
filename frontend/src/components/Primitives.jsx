@@ -1,0 +1,12 @@
+import { Bot, ArrowUpRight, LoaderCircle } from 'lucide-react';
+import { Button } from './ui/button';
+import { Dialog, DialogPortal, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
+import { colors } from '../world/characters';
+
+export const Action=({children,secondary=false,busy=false,className='',...props})=><Button className={(secondary?'action secondary':'action')+' '+className} {...props} disabled={props.disabled||busy}>{busy?<LoaderCircle size={15} className="spin"/>:null}{children}</Button>;
+export const Avatar=({avatar='mint',size='',testId})=><div data-testid={testId} className={'bot-avatar '+size} style={{'--bot-color':colors[avatar]||colors.mint}}><span className="bot-antenna"/><span className="bot-face"><i/><i/></span><span className="bot-body"/></div>;
+export const Status=({status,id})=><span data-testid={id} className={'status '+status?.toLowerCase()}><i/>{status}</span>;
+export const Modal=({title,subtitle,children,onClose,wide=false,id})=><Dialog open modal={false} onOpenChange={v=>!v&&onClose()}><DialogPortal><div className="world-modal-backdrop" aria-hidden="true"/></DialogPortal><DialogContent onInteractOutside={e=>e.preventDefault()} className={'world-modal '+(wide?'wide':'')} data-testid={id+'-modal'}><header className="modal-top"><div className="modal-symbol"><Bot size={20}/></div><div><DialogTitle data-testid={id+'-modal-title'}>{title}</DialogTitle><DialogDescription data-testid={id+'-subtitle'}>{subtitle}</DialogDescription></div></header><div className="modal-scroll">{children}</div><footer className="modal-foot"><span><i className="tiny-dot"/> AGENT.WS CIVILIZATION</span><span>EARLY ACCESS</span></footer></DialogContent></Dialog>;
+export const SectionTitle=({children,id,aside})=><div className="section-title"><h3 data-testid={id}>{children}</h3>{aside}</div>;
+export const Empty=({title,description,children,id='empty'})=><div className="empty-state"><Bot size={32}/><h3 data-testid={id+'-title'}>{title}</h3><p data-testid={id+'-description'}>{description}</p>{children}</div>;
+export const AgentRow=({agent,onClick,prefix})=><button className="agent-row" data-testid={`${prefix}-${agent.id}`} onClick={()=>onClick(agent.id)}><Avatar avatar={agent.avatar}/><span className="agent-row-text"><strong>{agent.name}</strong><small>{agent.category}</small></span><span className={'agent-dot '+agent.status.toLowerCase()} title={agent.status}/><ArrowUpRight className="row-arrow" size={14}/></button>;

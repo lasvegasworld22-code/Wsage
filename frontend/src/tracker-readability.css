@@ -1,0 +1,9 @@
+/* Keep the full identity readable, including a 40-character unbroken name. */
+.mission-tracker>header{align-items:flex-start}
+.mission-tracker>header>div{flex:1;min-width:0}
+.mission-tracker .tracker-agent{max-width:none;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.6}
+.mission-tracker .tracker-elapsed{flex-shrink:0;white-space:nowrap;margin-left:0;padding-top:3px}
+.mission-tracker>header>button{flex-shrink:0;margin-top:1px}
+.mission-tracker .tracker-icon{flex-shrink:0;margin-top:2px}
+.mission-tracker>header strong{display:block;overflow-wrap:anywhere;line-height:1.6}
+@media(max-width:700px){.mission-tracker .tracker-agent{font-size:10px;line-height:1.65;margin-bottom:5px}.mission-tracker>header{gap:8px}.mission-tracker .tracker-detail{margin-top:10px}}

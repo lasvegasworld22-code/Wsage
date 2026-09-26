@@ -1,0 +1,25 @@
+{
+  "type": "Main-agent focused verification after iteration_1",
+  "date": "2026-09-25",
+  "resolved": [
+    "Exchange modal/title testids are unique",
+    "Modeless world terminals no longer block dock navigation",
+    "Topbar remains reachable above panels at desktop viewport",
+    "Mobile report -> chat -> create -> treasury transitions passed",
+    "X compose handoff opens explicitly with encoded text and demo attribution; no automated posting"
+  ],
+  "verified_viewports": ["1920x800", "390x844"],
+  "horizontal_overflow": [],
+  "duplicate_testids": [],
+  "backend_regression": "13/13 previously passed; no core backend feature changes after report",
+  "build": "Frontend production compilation passed",
+  "remaining_known_blockers_in_agreed_demo_scope": [],
+  "intentional_limits": ["Wallet and token verification simulated", "USDC is demo accounting", "Trading locked", "Public search scope is GitHub/Wikipedia plus public URL reading"],
+  "evidence": [
+    "/app/reference/final-world-desktop.jpg",
+    "/app/reference/final-world-mobile.jpg",
+    "/app/reference/final-panel-mobile.jpg",
+    "/app/reference/final-desktop-report.jpg",
+    "/app/reference/final-mobile-report.jpg"
+  ]
+}

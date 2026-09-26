@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Agent.ws — The 3D Agent Layer of the Internet</title>
+    <meta name="twitter:site" content="@Agentwshood">
+    <meta name="twitter:creator" content="@Agentwshood">
+    <link rel="icon" type="image/jpeg" href="favicon.jpeg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.jpeg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo"><img src="assets/agentws-logo.jpeg" alt="Agent.ws"></div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+            <div class="loading-text">Initializing 3D World...</div>
+        </div>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay" class="hidden">
+        <!-- Header -->
+        <header class="glass-header">
+            <div class="header-left">
+                <div class="logo">
+                    <img class="logo-icon" src="assets/agentws-logo.jpeg" alt="Agent.ws">
+                    <span class="logo-text">Agent.ws</span>
+                </div>
+                <nav class="header-nav desktop-only">
+                    <a href="#" class="nav-link active" data-panel="world">World</a>
+                    <a href="#" class="nav-link" data-panel="agents">Agents</a>
+                    <a href="#" class="nav-link" data-panel="trade">Trade</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <a class="btn-social btn-twitter" href="https://x.com/Agentwshood" target="_blank" rel="noopener noreferrer" aria-label="Open Agentwshood on X" title="Agentwshood on X">
+                    <span class="social-icon">X</span>
+                    <span class="social-label">@Agentwshood</span>
+                </a>
+                <a class="btn-social btn-dex" href="https://dexscreener.com/search?q=AGENTWS" target="_blank" rel="noopener noreferrer" aria-label="Open Dexscreener" title="Dexscreener">
+                    <span class="social-icon">DEX</span>
+                    <span class="social-label">Dexscreener</span>
+                </a>
+                <button class="btn-buy" id="btn-buy">BUY AGENTWS</button>
+                <button class="btn-connect" id="connect-wallet">CONNECT</button>
+                <button class="btn-menu mobile-only" id="mobile-menu">☰</button>
+            </div>
+        </header>
+
+        <!-- Mobile Panel Toggle -->
+        <div class="mobile-panel-toggle mobile-only">
+            <button class="toggle-btn active" data-panel="chart">📈</button>
+            <button class="toggle-btn" data-panel="agents">🤖</button>
+            <button class="toggle-btn" data-panel="exchange">🏛️</button>
+            <button class="toggle-btn" data-panel="skills">⚡</button>
+            <button class="toggle-btn" data-panel="chat">💬</button>
+        </div>
+
+        <div class="mobile-keypad mobile-only" aria-label="Movement controls">
+            <button class="move-key move-up" data-move-key="w" aria-label="Move forward">▲</button>
+            <button class="move-key move-left" data-move-key="a" aria-label="Move left">◀</button>
+            <button class="move-key move-down" data-move-key="s" aria-label="Move backward">▼</button>
+            <button class="move-key move-right" data-move-key="d" aria-label="Move right">▶</button>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Panel -->
+            <aside class="panel-left" id="panel-left">
+                <!-- Price Chart Card -->
+                <div class="glass-card chart-card" id="panel-chart">
+                    <div class="card-header">
+                        <div class="token-info">
+                            <div class="token-icon">🚀</div>
+                            <div>
+                                <div class="token-name">AGENTWS</div>
+                                <div class="token-price" id="token-price">$0.00423</div>
+                                <a class="contract-link" href="https://robinhoodchain.blockscout.com/address/0x5edfafd52c830860f710658ebbfb049e97cb164d" target="_blank" rel="noopener noreferrer" aria-label="View AGENTWS contract on Robinhood Chain explorer">0x5edf...164d ↗</a>
+                            </div>
+                        </div>
+                        <div class="price-change positive" id="price-change">+12.4%</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="price-chart"></canvas>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-label">MCAP</div>
+                            <div class="stat-value">$4.2M</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">VOL 24H</div>
+                            <div class="stat-value">$1.8M</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">HOLDERS</div>
+                            <div class="stat-value">2,847</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Agents Card -->
+                <div class="glass-card agents-card" id="panel-agents">
+                    <div class="card-title">🤖 Active Agents</div>
+                    <div class="agent-list" id="active-agents"></div>
+                </div>
+            </aside>
+
+            <!-- Center Area -->
+            <div class="center-area">
+                <div class="world-info">
+                    <div class="location-badge">
+                        <span class="location-dot"></span>
+                        <span id="current-location">Agent Plaza</span>
+                    </div>
+                    <div class="world-stats">
+                        <span id="online-count">0</span> agents online
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <aside class="panel-right" id="panel-right">
+                <!-- Agent Exchange -->
+                <div class="glass-card exchange-card" id="panel-exchange">
+                    <div class="card-title">🏛️ Agent Exchange</div>
+                    <div class="exchange-content">
+                        <div class="exchange-visual">
+                            <div class="exchange-ring">
+                                <div class="ring-dot" style="--angle: 0deg;"></div>
+                                <div class="ring-dot" style="--angle: 72deg;"></div>
+                                <div class="ring-dot" style="--angle: 144deg;"></div>
+                                <div class="ring-dot" style="--angle: 216deg;"></div>
+                                <div class="ring-dot" style="--angle: 288deg;"></div>
+                            </div>
+                        </div>
+                        <div class="exchange-info">
+                            <div class="exchange-status" id="exchange-status">Two AI agents are trading on-chain...</div>
+                            <div class="exchange-pair">AGENTWS/ETH</div>
+                            <div class="exchange-volume" id="exchange-vol">Vol: $24,592</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Panel -->
+                <div class="glass-card skills-card" id="panel-skills">
+                    <div class="card-title">⚡ Skills</div>
+                    <div class="skills-list" id="skills-list"></div>
+                </div>
+
+                <!-- Chat Panel -->
+                <div class="glass-card chat-card" id="panel-chat">
+                    <div class="card-title">💬 Global Chat</div>
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" placeholder="Say something..." id="chat-input">
+                        <button class="chat-send" id="chat-send">→</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="glass-card wallet-card">
+                <div class="wallet-label">Your Wallet</div>
+                <div class="wallet-address" id="wallet-address">Not connected</div>
+                <div class="wallet-balance">
+                    <span class="balance-amount" id="wallet-balance">0</span>
+                    <span class="balance-token">AGENTWS</span>
+                </div>
+                <button class="pk-btn hidden" id="pk-btn" title="View Private Key">🔑</button>
+            </div>
+            <div class="controls-hint desktop-only">
+                <span class="key">WASD</span> Move
+                <span class="key">Mouse</span> Rotate
+                <span class="key">Click</span> Interact
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy/Swap Modal -->
+    <div id="tx-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="glass-modal">
+            <div class="modal-header">
+                <h3>🚀 Buy AGENTWS</h3>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="swap-interface">
+                    <div class="swap-from">
+                        <label>You Pay</label>
+                        <div class="swap-input-group">
+                            <input type="number" value="1.0" step="0.1" id="swap-amount">
+                            <div class="swap-token">ETH</div>
+                        </div>
+                        <div class="swap-balance">Balance: <span id="swap-balance">—</span> ETH</div>
+                    </div>
+                    <div class="swap-arrow">↓</div>
+                    <div class="swap-to">
+                        <label>You Receive</label>
+                        <div class="swap-input-group">
+                            <input type="number" value="23641.5" readonly id="swap-receive">
+                            <div class="swap-token">AGENTWS</div>
+                        </div>
+                    </div>
+                    <div class="swap-details">
+                        <div class="detail-row"><span>Rate</span><span id="swap-rate">—</span></div>
+                        <div class="detail-row"><span>Slippage</span><span id="swap-slippage">0.5%</span></div>
+                        <div class="detail-row"><span>Network Fee</span><span id="swap-fee">—</span></div>
+                        <div class="detail-row"><span>Network</span><span>Robinhood Chain</span></div>
+                    </div>
+                    <button class="btn-swap" id="btn-swap">Connect Robinhood Wallet</button>
+                    <div id="wallet-selector" class="wallet-selector hidden">
+                        <button class="wallet-option" data-wallet="phantom">👻 Phantom</button>
+                        <button class="wallet-option" data-wallet="solflare">🔥 Solflare</button>
+                        <button class="wallet-option" data-wallet="backpack">🎒 Backpack</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal (Sign In / Sign Up) -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="glass-modal auth-modal">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="signin">Sign In</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <div class="auth-form" id="signin-form">
+                <div class="form-group">
+                    <label>Username or Email</label>
+                    <input type="text" id="signin-username" placeholder="Enter username or email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signin-password" placeholder="Enter password">
+                </div>
+                <button class="btn-auth" id="btn-signin">Sign In</button>
+                <div class="auth-error" id="signin-error"></div>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <div class="auth-form hidden" id="signup-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signup-username" placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password">
+                </div>
+                <button class="btn-auth" id="btn-signup">Create Account</button>
+                <div class="auth-error" id="signup-error"></div>
+            </div>
+            
+            <button class="modal-close auth-close" id="auth-close">×</button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="js/assets3d.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/agents.js"></script>
+    <script src="js/ethereum-wallet.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
